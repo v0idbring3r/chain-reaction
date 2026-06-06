@@ -238,14 +238,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
     });
   },
 
-  goHome: () => set({
-    ...INITIAL_STATE,
-    board: createInitialBoard(),
-    hasPlayed: new Set(),
-    eliminatedPlayers: new Set(),
-    pendingEliminated: new Set(),
-    pendingHasPlayed: new Set(),
-  }),
+  goHome: () => {
+    const { delayWinScreen, hapticsEnabled, soundEnabled } = get();
+    set({
+      ...INITIAL_STATE,
+      board: createInitialBoard(),
+      hasPlayed: new Set(),
+      eliminatedPlayers: new Set(),
+      pendingEliminated: new Set(),
+      pendingHasPlayed: new Set(),
+      delayWinScreen,
+      hapticsEnabled,
+      soundEnabled,
+    });
+  },
 }));
 
 export function getPlayerColor(paletteKey: PaletteKey, playerIndex: number): string {

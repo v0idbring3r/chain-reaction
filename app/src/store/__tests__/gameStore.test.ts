@@ -383,6 +383,19 @@ describe('goHome', () => {
     expect(state.gridOption).toBe(CR_GRID_OPTIONS[1]);
     expect(state.animatingExplosion).toBe(false);
   });
+
+  it('preserves settings across goHome', () => {
+    useGameStore.getState().setDelayWinScreen(false);
+    useGameStore.getState().setHapticsEnabled(false);
+    useGameStore.getState().setSoundEnabled(false);
+    useGameStore.getState().startGame();
+    useGameStore.getState().goHome();
+
+    const state = useGameStore.getState();
+    expect(state.delayWinScreen).toBe(false);
+    expect(state.hapticsEnabled).toBe(false);
+    expect(state.soundEnabled).toBe(false);
+  });
 });
 
 describe('applyExplosionStep', () => {
