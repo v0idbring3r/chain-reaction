@@ -6,17 +6,22 @@ A cross-platform Chain Reaction strategy game for iOS and Android, built with Ex
 
 ## Current Status
 
-Phases 1–3 complete. The game is playable with full animations.
+Phases 1–3 complete. The game is playable with full animations, haptics, and sound.
 
 - Phase 1: Game engine (pure TypeScript, 100% test coverage)
 - Phase 2: React Native UI with local multiplayer
-- Phase 3: All 7 Reanimated animations
+- Phase 3: All 7 Reanimated animations + settings screen + haptics + sound
 
 **Next: Phase 4 (Firebase multiplayer) or Phase 5 (AI opponents) — both deferred.**
 
-**Pending: Settings screen** — needs UI to toggle `delayWinScreen` (show final board before win screen), haptics, sound. Store already has `delayWinScreen` flag (default: true) and `setDelayWinScreen` action.
-
 See `docs/PHASES.md` for the full phased plan.
+
+## Pending Polish
+
+- **Reset button on GameScreen** — Add ↻ (reset) button on the left and ⏸ (pause) on the right of the game toolbar. Reset should show a confirmation dialog before restarting.
+- **Button color consistency** — BACK, SETTINGS, and QUIT buttons use `THEME.textSecondary` which looks disabled. Change them to use the same `#00E5FF` cyan as primary buttons.
+- **Improve sound effects** — Current sounds are ffmpeg-generated sine wave placeholders. Replace with polished game audio from a free SFX library or synth tool. No code changes needed — just drop new WAV files into `app/assets/sounds/`.
+- **Phase 3b polish** — Custom fonts (Orbitron, Rajdhani, JetBrains Mono) for the neon arcade aesthetic.
 
 ## Tech Stack
 
@@ -35,13 +40,14 @@ See `docs/PHASES.md` for the full phased plan.
 ```
 chain-reaction/
   app/                    # Expo project
+    assets/sounds/        # WAV sound effects (tap, explode, win)
     src/
       types/              # game.types.ts, navigation.types.ts
       engine/             # GameEngine.ts (pure logic, no React)
-      components/         # Grid, Cell, Orb, AtomCluster, PlayerTab, TravelerOrb, etc.
-      screens/            # Home, GameSetup, Game, Win
+      components/         # Grid, Cell, Orb, HapticPressable, HapticSwitch, etc.
+      screens/            # Home, GameSetup, Game, Win, Settings
       store/              # gameStore.ts (Zustand)
-      utils/              # constants.ts, colors.ts
+      utils/              # constants.ts, colors.ts, haptics.ts, sounds.ts
   docs/                   # Design specs
   prototype/              # Original HTML/CSS/JS prototype
   CLAUDE.md               # This file
