@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -9,10 +9,15 @@ import { GameScreen } from './src/screens/GameScreen';
 import { WinScreen } from './src/screens/WinScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { THEME } from './src/utils/colors';
+import { loadSounds } from './src/utils/sounds';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
+  useEffect(() => {
+    loadSounds();
+  }, []);
+
   return (
     <NavigationContainer>
       <StatusBar style="light" />

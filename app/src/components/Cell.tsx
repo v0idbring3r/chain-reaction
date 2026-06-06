@@ -14,6 +14,7 @@ import { AtomCluster } from './AtomCluster';
 import { HapticPressable } from './HapticPressable';
 import { THEME } from '../utils/colors';
 import { hapticExplode } from '../utils/haptics';
+import { soundExplode } from '../utils/sounds';
 
 interface CellProps {
   cell: CellType;
@@ -77,6 +78,7 @@ export function Cell({ cell, cellSize, color, onPress, criticalSoon, isExploding
   useEffect(() => {
     if (isExploding) {
       hapticExplode();
+      soundExplode();
       flashScale.value = 0.4;
       flashOpacity.value = 0;
       flashScale.value = withTiming(1.4, { duration: 200, easing: Easing.out(Easing.ease) });

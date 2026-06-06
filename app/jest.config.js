@@ -4,6 +4,9 @@ module.exports = {
   testEnvironment: 'node',
   watchman: false,
   roots: ['<rootDir>/src'],
+  moduleNameMapper: {
+    '\\.(wav|mp3|aac)$': '<rootDir>/src/__mocks__/fileMock.js',
+  },
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/**/*.types.ts',

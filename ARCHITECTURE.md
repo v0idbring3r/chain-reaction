@@ -46,6 +46,7 @@
 │  constants.ts (grid options, limits)                        │
 │  colors.ts (palettes, player names, theme)                  │
 │  haptics.ts (haptic feedback effects)                       │
+│  sounds.ts (sound effect playback)                          │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -100,7 +101,8 @@ Static configuration and side-effect utilities.
 
 - **`constants.ts`** — Grid size presets (`4×6`, `6×9`, `8×12`), player count bounds, runaway guard limit
 - **`colors.ts`** — Three color palettes (neon/arcade/toxic), player names, theme colors
-- **`haptics.ts`** — Haptic feedback functions (`hapticPlace`, `hapticExplode`, `hapticWin`). Each checks the store's `hapticsEnabled` flag before firing.
+- **`haptics.ts`** — Haptic feedback functions (`hapticTap`, `hapticExplode`, `hapticWin`). Each checks the store's `hapticsEnabled` flag before firing.
+- **`sounds.ts`** — Sound effect functions (`soundTap`, `soundExplode`, `soundWin`). Pre-loads WAV assets on app start via `loadSounds()`. Each checks the store's `soundEnabled` flag before playing.
 
 ### Store (`src/store/gameStore.ts`)
 
@@ -129,16 +131,18 @@ Exported helpers:
 
 React Native UI components with Reanimated 3 animations.
 
-**Colocated effects principle**: Each component owns its own animation + haptic (+ sound) triggers. For example, `Orb` fires `hapticPlace` on mount alongside its pop animation, `Cell` fires `hapticExplode` when its flash triggers, and `Confetti` fires `hapticWin` on mount. This ensures effects never drift apart.
+**Colocated effects principle**: Each component owns its own animation + haptic + sound triggers. For example, `HapticPressable` fires `hapticTap` + `soundTap` on every press, `Cell` fires `hapticExplode` + `soundExplode` when its flash triggers, and `Confetti` fires `hapticWin` + `soundWin` on mount. This ensures effects never drift apart.
 
 - **Grid** — reads board from store, computes responsive cell size using full screen dimensions (width minus padding, height minus 140px HUD reserve), passes `criticalSoon` and `isExploding` flags to Cells
-- **Cell** — Pressable with wobble animation (cr-wobble) when near critical mass, explosion flash overlay + haptic (cr-explode-flash)
+- **Cell** — HapticPressable with wobble animation (cr-wobble) when near critical mass, explosion flash overlay + haptic + sound (cr-explode-flash)
 - **AtomCluster** — positions 1-3 Orbs using absolute layout within a cell
-- **Orb** — Animated.View with pop + haptic on mount (cr-pop) and idle float (cr-atom-orbit)
+- **Orb** — Animated.View with pop on mount (cr-pop) and idle float (cr-atom-orbit)
 - **PlayerTab** — HUD element showing player dot, name (with "(E)" if eliminated), orb count
+- **HapticPressable** — drop-in Pressable replacement that fires hapticTap + soundTap on every press
+- **HapticSwitch** — drop-in Switch replacement that fires hapticTap + soundTap on value change
 - **TravelerOrb** — absolutely positioned orb that flies between cells during explosions (cr-travel)
 - **ExplosionParticles** — 8 radial scatter dots on explosion (cr-particle)
-- **Confetti** — 20 staggered particles + haptic for win celebration (cr-celebrate)
+- **Confetti** — 20 staggered particles + haptic + sound for win celebration (cr-celebrate)
 
 ### Screens (`src/screens/`)
 
@@ -211,4 +215,4 @@ gameStore.playCell(col, row)
 | Screens | Done | N/A (UI only) |
 | Animations | Done | N/A (Reanimated) |
 | Settings | Done | N/A (UI only) |
-| Sound | Pending | — |
+| Sound | Done | 100% |

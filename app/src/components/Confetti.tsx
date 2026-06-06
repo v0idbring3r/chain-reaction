@@ -10,6 +10,7 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 import { hapticWin } from '../utils/haptics';
+import { soundWin } from '../utils/sounds';
 
 const CONFETTI_COUNT = 20;
 const PARTICLE_SIZE = 6;
@@ -61,6 +62,7 @@ function ConfettiParticle({ color, angle, delayMs }: { color: string; angle: num
 export function Confetti({ colors }: ConfettiProps) {
   useEffect(() => {
     hapticWin();
+    soundWin();
   }, []);
 
   const particles = Array.from({ length: CONFETTI_COUNT }, (_, i) => ({

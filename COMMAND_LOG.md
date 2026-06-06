@@ -34,3 +34,6 @@ All shell commands run during development of this project, in chronological orde
 23. `npx expo install expo-haptics` — Install haptic feedback package
 24. `npx tsc --noEmit` — Type check haptics integration (zero errors)
 25. `npx jest --coverage --watchman=false` — Run tests with coverage (92 tests, 100% all metrics)
+26. `npx expo install expo-av` — Install audio playback package
+27. `npx tsc --noEmit` — Type check sound integration (zero errors)
+28. `npx jest --coverage --watchman=false` — Run tests with coverage (101 tests, 100% all metrics)
