@@ -129,8 +129,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   playCell: (c, r) => {
-    const { board, currentPlayer, playerCount, hasPlayed, phase, animatingExplosion } = get();
+    const { board, currentPlayer, playerCount, hasPlayed, phase, animatingExplosion, eliminatedPlayers } = get();
     if (phase !== 'playing' || animatingExplosion) return false;
+    if (eliminatedPlayers.has(currentPlayer)) return false;
 
     const result = playMove(board, c, r, currentPlayer, playerCount, hasPlayed);
     if (result === null) return false;

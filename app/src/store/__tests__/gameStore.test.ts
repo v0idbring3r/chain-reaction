@@ -97,6 +97,13 @@ describe('setters', () => {
     useGameStore.getState().setPaletteKey('toxic');
     expect(useGameStore.getState().paletteKey).toBe('toxic');
   });
+
+  it('setDelayWinScreen updates setting', () => {
+    useGameStore.getState().setDelayWinScreen(false);
+    expect(useGameStore.getState().delayWinScreen).toBe(false);
+    useGameStore.getState().setDelayWinScreen(true);
+    expect(useGameStore.getState().delayWinScreen).toBe(true);
+  });
 });
 
 describe('startGame', () => {
@@ -263,6 +270,57 @@ describe('playCell', () => {
     expect(state.eliminatedPlayers.has(1)).toBe(true);
     expect(state.currentPlayer).toBe(2);
     expect(state.winner).toBeNull();
+  });
+
+  it('skips eliminated player turn in 3-player game after sequential play', () => {
+    useGameStore.getState().goHome();
+    useGameStore.getState().setPlayerCount(3);
+    useGameStore.getState().setGridOption(CR_GRID_OPTIONS[0]); // 4x6
+    useGameStore.getState().startGame();
+
+    // Round 1: all players place once
+    useGameStore.getState().playCell(0, 0); // p0 at corner
+    expect(useGameStore.getState().currentPlayer).toBe(1);
+    useGameStore.getState().playCell(0, 1); // p1 next to p0's corner
+    expect(useGameStore.getState().currentPlayer).toBe(2);
+    useGameStore.getState().playCell(2, 2); // p2 somewhere safe
+    expect(useGameStore.getState().currentPlayer).toBe(0);
+
+    // Round 2: p0 places on corner again — explodes, captures p1's cell
+    useGameStore.getState().playCell(0, 0); // p0 corner (0,0) count=2, cm=2, EXPLODES
+
+    // If explosion happened, finish it
+    if (useGameStore.getState().animatingExplosion) {
+      useGameStore.getState().finishExplosionSequence();
+    }
+
+    const state = useGameStore.getState();
+    // p1 should be eliminated (their only cell was captured)
+    expect(state.eliminatedPlayers.has(1)).toBe(true);
+    // Turn should skip p1 and go to p2
+    expect(state.currentPlayer).toBe(2);
+  });
+
+  it('rejected move from eliminated player if somehow their turn is reached', () => {
+    useGameStore.getState().goHome();
+    useGameStore.getState().setPlayerCount(3);
+    useGameStore.getState().setGridOption(CR_GRID_OPTIONS[0]);
+    useGameStore.getState().startGame();
+
+    // Force state: p1 eliminated, but currentPlayer set to 1 (shouldn't happen but guard against it)
+    const board = useGameStore.getState().board;
+    setBoardCell(board, 0, 0, 1, 0);
+    setBoardCell(board, 2, 2, 1, 2);
+    useGameStore.setState({
+      board,
+      hasPlayed: new Set([0, 1, 2]),
+      eliminatedPlayers: new Set([1]),
+      currentPlayer: 1,
+    });
+
+    // p1 tries to place — should be rejected since they're eliminated
+    const result = useGameStore.getState().playCell(1, 1);
+    expect(result).toBe(false);
   });
 });
 
