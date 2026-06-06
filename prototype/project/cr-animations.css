@@ -1,0 +1,126 @@
+/* Chain Reaction — neon arcade animations */
+
+@keyframes cr-pop {
+  0%   { transform: scale(0.5); opacity: 0.4; }
+  55%  { transform: scale(1.18); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.cr-pop > * {
+  animation: cr-pop 240ms cubic-bezier(.34,1.56,.64,1) both;
+}
+
+@keyframes cr-wobble {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  20%      { transform: rotate(-3deg) scale(1.04); }
+  40%      { transform: rotate(2deg)  scale(0.97); }
+  60%      { transform: rotate(-2deg) scale(1.04); }
+  80%      { transform: rotate(3deg)  scale(0.98); }
+}
+.cr-wobble {
+  animation: cr-wobble 0.55s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes cr-atom-orbit {
+  0%   { translate: 0 0; }
+  50%  { translate: 0 -2px; }
+  100% { translate: 0 0; }
+}
+.cr-atom-spin {
+  animation: cr-atom-orbit 1.6s ease-in-out infinite;
+}
+
+@keyframes cr-explode-flash {
+  0%   { transform: scale(0.4); opacity: 0; }
+  30%  { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+.cr-explode > * {
+  animation: cr-explode-flash 200ms ease-out forwards;
+}
+
+@keyframes cr-travel {
+  0%   { transform: translate(-50%, -50%) scale(0.6); opacity: 0.7; }
+  20%  { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  100% {
+    transform: translate(calc(-50% + var(--cr-tx)), calc(-50% + var(--cr-ty))) scale(0.8);
+    opacity: 1;
+  }
+}
+.cr-travel {
+  animation-name: cr-travel;
+  animation-timing-function: cubic-bezier(.55,.05,.5,1);
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1;
+}
+
+@keyframes cr-particle {
+  0%   { transform: translate(0, 0) scale(1);   opacity: 1; }
+  100% { transform: translate(var(--cr-px), var(--cr-py)) scale(0); opacity: 0; }
+}
+.cr-particle {
+  position: absolute;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  left: -2px; top: -2px;
+  animation: cr-particle 480ms ease-out forwards;
+}
+
+@keyframes cr-shockwave {
+  0%   { width: 0; height: 0; opacity: 0.9; }
+  100% { width: 80px; height: 80px; opacity: 0; }
+}
+.cr-shockwave {
+  position: absolute;
+  border: 1.5px solid;
+  border-radius: 50%;
+  left: 0; top: 0;
+  transform: translate(-50%, -50%);
+  animation: cr-shockwave 360ms ease-out forwards;
+}
+
+@keyframes cr-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+.cr-float {
+  animation: cr-float 3s ease-in-out infinite;
+}
+
+@keyframes cr-pulse-bg {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+
+@keyframes cr-orbit {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes cr-celebrate {
+  0% {
+    transform: rotate(var(--cr-angle)) translateY(0) scale(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(var(--cr-angle)) translateY(-180px) scale(1);
+    opacity: 0;
+  }
+}
+.cr-celebrate {
+  animation: cr-celebrate 1.6s ease-out infinite;
+  transform-origin: center;
+}
+
+/* Page chrome */
+html, body {
+  margin: 0; padding: 0;
+  background: #0a0a14;
+  color: #fff;
+  font-family: 'Rajdhani', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }

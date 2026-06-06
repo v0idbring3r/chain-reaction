@@ -1,0 +1,33 @@
+# Dependencies
+app/node_modules/
+
+# Expo
+app/.expo/
+app/dist/
+app/web-build/
+
+# Metro
+app/.metro-health-check*
+
+# OS
+.DS_Store
+*.swp
+*~
+
+# IDE
+.idea/
+.vscode/
+*.sublime-*
+
+# Env
+.env
+.env.*
+
+# Build artifacts
+*.tsbuildinfo
+
+# Coverage
+app/coverage/
+
+# Claude session files (local only)
+.claude/

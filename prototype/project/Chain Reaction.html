@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chain Reaction — Multiplayer Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="cr-animations.css" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    body { background: #0a0a14; min-height: 100vh; }
+    /* Force-disable iOS frame's scroll on the inner content area
+       so absolute-positioned screens fill the viewport correctly */
+    .cr-phone-shell > div > div > div:nth-child(2) > div:nth-child(2) {
+      overflow: hidden !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="ios-frame.jsx"></script>
+  <script type="text/babel" src="android-frame.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="game-engine.jsx"></script>
+  <script type="text/babel" src="cr-cells.jsx"></script>
+  <script type="text/babel" src="cr-board.jsx"></script>
+  <script type="text/babel" src="cr-screens.jsx"></script>
+  <script type="text/babel" src="cr-app.jsx"></script>
+
+  <script type="text/babel" data-presets="env,react">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "paletteKey": "neon",
+      "atomShape": "orb",
+      "playerCount": 4,
+      "gridKey": "medium",
+      "speed": 1,
+      "background": "grid",
+      "soundOn": true
+    }/*EDITMODE-END*/;
+
+    function PhoneShell({ kind, tweaks }) {
+      // We pass a key derived from playerCount/grid so app fully resets when
+      // those tweaks change at home / setup level.
+      const shellStyle = { position: 'relative' };
+      const inner = (
+        <div className="cr-phone-shell" style={{ position: 'absolute', inset: 0 }}>
+          <ChainReactionApp tweaks={tweaks} />
+        </div>
+      );
+      if (kind === 'ios') {
+        return (
+          <window.IOSDevice width={390} height={844} dark={true}>
+            {inner}
+          </window.IOSDevice>
+        );
+      }
+      // android
+      return (
+        <window.AndroidDevice width={390} height={844} dark={true}>
+          {inner}
+        </window.AndroidDevice>
+      );
+    }
+
+    function FocusScreen({ tweaks, screen, label }) {
+      // Screen previews used inside DCArtboards on the canvas.
+      // We render inside a phone-sized area but force the app onto a given screen by remounting with a key + initial route prop.
+      return <PhoneShell kind="ios" tweaks={tweaks} />;
+    }
+
+    function Root() {
+      const [t, setTweak] = window.useTweaks(TWEAK_DEFAULTS);
+
+      return (
+        <>
+          <window.DesignCanvas>
+            <window.DCSection id="phones" title="Chain Reaction" subtitle="Neon arcade — fully playable. Tap any cell. Watch the chain.">
+              <window.DCArtboard id="ios" label="iOS · iPhone" width={460} height={920}>
+                <div style={{
+                  width: '100%', height: '100%',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: 'transparent',
+                }}>
+                  <PhoneShell kind="ios" tweaks={t} />
+                </div>
+              </window.DCArtboard>
+              <window.DCArtboard id="android" label="Android · Pixel" width={460} height={920}>
+                <div style={{
+                  width: '100%', height: '100%',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: 'transparent',
+                }}>
+                  <PhoneShell kind="android" tweaks={t} />
+                </div>
+              </window.DCArtboard>
+            </window.DCSection>
+
+            <window.DCSection id="flow" title="Screen flow" subtitle="Walk through the full game lifecycle.">
+              <window.DCArtboard id="home" label="01 — Home" width={420} height={880}>
+                <ScreenPreview tweaks={t} screen="home" />
+              </window.DCArtboard>
+              <window.DCArtboard id="setup" label="02 — Player setup" width={420} height={880}>
+                <ScreenPreview tweaks={t} screen="setup" />
+              </window.DCArtboard>
+              <window.DCArtboard id="game" label="03 — Active game" width={420} height={880}>
+                <ScreenPreview tweaks={t} screen="game" />
+              </window.DCArtboard>
+              <window.DCArtboard id="chain" label="04 — Chain reaction" width={420} height={880}>
+                <ScreenPreview tweaks={t} screen="chain" />
+              </window.DCArtboard>
+              <window.DCArtboard id="pause" label="05 — Pause" width={420} height={880}>
+                <ScreenPreview tweaks={t} screen="pause" />
+              </window.DCArtboard>
+              <window.DCArtboard id="win" label="06 — Victory" width={420} height={880}>
+                <ScreenPreview tweaks={t} screen="win" />
+              </window.DCArtboard>
+              <window.DCArtboard id="tutorial" label="07 — Tutorial" width={420} height={880}>
+                <ScreenPreview tweaks={t} screen="tutorial" />
+              </window.DCArtboard>
+            </window.DCSection>
+          </window.DesignCanvas>
+
+          <window.TweaksPanel title="Tweaks">
+            <window.TweakSection title="Theme">
+              <window.TweakColor
+                label="Palette"
+                value={t.paletteKey}
+                onChange={v => setTweak('paletteKey', v)}
+                options={[
+                  ['#00E5FF','#FF2E93','#B6FF3C','#FFB020'],
+                  ['#3D8BFF','#FF4D6D','#7CFFB2','#FFE45E'],
+                  ['#39FF14','#FF00E5','#00F0FF','#FFD600'],
+                ]}
+              />
+              <window.TweakRadio
+                label="Atom"
+                value={t.atomShape}
+                onChange={v => setTweak('atomShape', v)}
+                options={[
+                  { value: 'orb', label: 'Orb' },
+                  { value: 'hex', label: 'Hex' },
+                  { value: 'nucleus', label: 'Nucleus' },
+                ]}
+              />
+              <window.TweakSelect
+                label="Background"
+                value={t.background}
+                onChange={v => setTweak('background', v)}
+                options={[
+                  { value: 'grid', label: 'Neon grid' },
+                  { value: 'dots', label: 'Dot matrix' },
+                  { value: 'scanlines', label: 'CRT scanlines' },
+                  { value: 'plain', label: 'Plain dark' },
+                ]}
+              />
+            </window.TweakSection>
+            <window.TweakSection title="Match">
+              <window.TweakSelect
+                label="Players"
+                value={String(t.playerCount)}
+                onChange={v => setTweak('playerCount', Number(v))}
+                options={[
+                  { value: '2', label: '2' },
+                  { value: '3', label: '3' },
+                  { value: '4', label: '4' },
+                ]}
+              />
+              <window.TweakSelect
+                label="Grid"
+                value={t.gridKey}
+                onChange={v => setTweak('gridKey', v)}
+                options={[
+                  { value: 'small', label: 'Small (6×9)' },
+                  { value: 'medium', label: 'Medium (7×11)' },
+                  { value: 'large', label: 'Large (8×13)' },
+                ]}
+              />
+              <window.TweakSlider
+                label="Anim speed"
+                value={t.speed}
+                onChange={v => setTweak('speed', v)}
+                min={0.5} max={2.5} step={0.1}
+                format={v => `${v.toFixed(1)}×`}
+              />
+              <window.TweakToggle
+                label="Sound"
+                value={t.soundOn}
+                onChange={v => setTweak('soundOn', v)}
+              />
+            </window.TweakSection>
+          </window.TweaksPanel>
+        </>
+      );
+    }
+
+    // ScreenPreview — renders the app forced onto a particular screen so each
+    // artboard shows a different state. Uses a controlled wrapper.
+    function ScreenPreview({ tweaks, screen }) {
+      return (
+        <div style={{
+          width: '100%', height: '100%',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <window.IOSDevice width={390} height={844} dark={true}>
+            <div className="cr-phone-shell" style={{ position: 'absolute', inset: 0 }}>
+              <ScreenFor tweaks={tweaks} screen={screen} />
+            </div>
+          </window.IOSDevice>
+        </div>
+      );
+    }
+
+    function ScreenFor({ tweaks, screen }) {
+      const palette = window.CR_PALETTES[tweaks.paletteKey] || window.CR_PALETTES.neon;
+      const opt = window.CR_GRID_OPTIONS.find(o => o.key === tweaks.gridKey);
+
+      if (screen === 'home') {
+        return <window.CRHomeScreen palette={palette} onPlay={()=>{}} onTutorial={()=>{}} />;
+      }
+      if (screen === 'setup') {
+        const [pc, setPc] = React.useState(tweaks.playerCount);
+        const [gk, setGk] = React.useState(tweaks.gridKey);
+        return <window.CRSetupScreen
+          playerCount={pc} setPlayerCount={setPc}
+          gridKey={gk} setGridKey={setGk}
+          palette={palette}
+          onStart={()=>{}} onBack={()=>{}}
+        />;
+      }
+      if (screen === 'game') {
+        // Pre-populated mid-game board to showcase the gameplay HUD.
+        const board = makeBoard(opt.cols, opt.rows);
+        // sprinkle some atoms
+        const seeds = [
+          [1, 1, 0, 1], [2, 1, 0, 2], [3, 2, 1, 1], [4, 4, 1, 2],
+          [0, 5, 2, 2], [5, 6, 3, 1], [3, 7, 0, 1], [2, 8, 2, 1],
+          [4, 8, 3, 2], [1, 9, 1, 1],
+        ];
+        for (const [c, r, owner, count] of seeds) {
+          if (r < board.rows && c < board.cols) {
+            board.cells[r][c] = { count, owner };
+          }
+        }
+        return (
+          <window.CRGameScreen
+            board={board} currentPlayer={1}
+            palette={palette} shape={tweaks.atomShape} speed={tweaks.speed}
+            hasPlayed={{0:true,1:true,2:true,3:true}}
+            onMove={()=>{}} onWinner={()=>{}}
+            paused={null} onPause={()=>{}}
+            scores={countOrbs(board)} eliminated={{}}
+            playerCount={tweaks.playerCount}
+            pulse={tweaks.background}
+          />
+        );
+      }
+      if (screen === 'chain') {
+        // Chain-reaction-mid-explosion staged frame
+        const board = makeBoard(opt.cols, opt.rows);
+        const cx = Math.floor(opt.cols / 2);
+        const cy = Math.floor(opt.rows / 2);
+        // surround the center with primed cells of player 0
+        for (let dr = -1; dr <= 1; dr++) {
+          for (let dc = -1; dc <= 1; dc++) {
+            if (Math.abs(dr) + Math.abs(dc) === 1) {
+              board.cells[cy+dr][cx+dc] = { count: 3, owner: 0 };
+            }
+          }
+        }
+        // Some enemy cells nearby that will get captured
+        if (cy - 2 >= 0) board.cells[cy-2][cx] = { count: 2, owner: 1 };
+        if (cy + 2 < opt.rows) board.cells[cy+2][cx] = { count: 1, owner: 2 };
+        return (
+          <ChainReactionFrameBoard
+            board={board} palette={palette} shape={tweaks.atomShape}
+            playerCount={tweaks.playerCount} background={tweaks.background}
+          />
+        );
+      }
+      if (screen === 'pause') {
+        const board = makeBoard(opt.cols, opt.rows);
+        const seeds = [
+          [1, 1, 0, 1], [2, 1, 0, 2], [3, 2, 1, 1], [4, 4, 1, 2],
+        ];
+        for (const [c, r, owner, count] of seeds) {
+          if (r < board.rows && c < board.cols) board.cells[r][c] = { count, owner };
+        }
+        return (
+          <window.CRGameScreen
+            board={board} currentPlayer={0}
+            palette={palette} shape={tweaks.atomShape} speed={tweaks.speed}
+            hasPlayed={{0:true,1:true,2:true,3:true}}
+            onMove={()=>{}} onWinner={()=>{}}
+            paused={{
+              onResume:()=>{}, onRestart:()=>{}, onQuit:()=>{},
+              soundOn: tweaks.soundOn, setSoundOn: ()=>{},
+            }}
+            onPause={()=>{}}
+            scores={countOrbs(board)} eliminated={{}}
+            playerCount={tweaks.playerCount}
+            pulse={tweaks.background}
+          />
+        );
+      }
+      if (screen === 'win') {
+        return <window.CRWinScreen winner={0} palette={palette} onRematch={()=>{}} onHome={()=>{}} />;
+      }
+      if (screen === 'tutorial') {
+        return <window.CRTutorialScreen palette={palette} onClose={()=>{}} />;
+      }
+      return null;
+    }
+
+    // A static "frame" of the chain reaction with traveler atoms and bursts,
+    // for the explosion focus artboard.
+    function ChainReactionFrameBoard({ board, palette, shape, playerCount, background }) {
+      const cellSize = Math.floor(Math.min(352 / board.cols, 560 / board.rows));
+      const cx = Math.floor(board.cols / 2);
+      const cy = Math.floor(board.rows / 2);
+
+      // Manufactured travelers and bursts going outward from the 4 primed cells
+      const travelers = [];
+      const bursts = [];
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          if (Math.abs(dr) + Math.abs(dc) === 1) {
+            const ec = cx + dc, er = cy + dr;
+            bursts.push({ c: ec, r: er, color: palette[0], id: `${ec},${er}` });
+            // outward neighbors
+            const ns = [[ec-1,er],[ec+1,er],[ec,er-1],[ec,er+1]];
+            for (const [nc, nr] of ns) {
+              if (nc>=0 && nc<board.cols && nr>=0 && nr<board.rows) {
+                travelers.push({
+                  from: { c: ec, r: er },
+                  to: { c: nc, r: nr },
+                  color: palette[0],
+                  id: `${ec},${er}-${nc},${nr}`,
+                });
+              }
+            }
+          }
+        }
+      }
+      return (
+        <window.CRGridBg pattern={background}>
+          {/* turn glow */}
+          <div style={{
+            position:'absolute', inset:0,
+            background: `radial-gradient(ellipse at 50% 50%, ${palette[0]}25 0%, transparent 60%)`,
+          }} />
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ paddingTop: 56, paddingLeft: 16, paddingRight: 16, paddingBottom: 10,
+              display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ flex:1, textAlign:'center' }}>
+                <div style={{ fontFamily:"'JetBrains Mono', monospace", fontSize: 9, letterSpacing: 3, opacity: 0.5 }}>
+                  // CHAIN REACTION
+                </div>
+                <div style={{
+                  fontFamily:"'Orbitron', sans-serif", fontSize: 14, fontWeight: 800, letterSpacing: 4,
+                  color: palette[0], textShadow: `0 0 8px ${palette[0]}`, marginTop: 2,
+                }}>×{travelers.length} HITS</div>
+              </div>
+            </div>
+            <div style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', padding:'14px 0' }}>
+              <div style={{ position:'relative', width: board.cols * cellSize, height: board.rows * cellSize }}>
+                {board.cells.map((row, r) => (
+                  <div key={r} style={{ display: 'flex' }}>
+                    {row.map((cell, c) => {
+                      const isExploding = bursts.some(b => b.c === c && b.r === r);
+                      return (
+                        <window.CRCell
+                          key={`${c},${r}`}
+                          c={c} r={r} cell={cell}
+                          cellSize={cellSize} shape={shape}
+                          palette={palette}
+                          criticalSoon={cell.count >= window.criticalMass(c,r,board.cols,board.rows)-1 && cell.count > 0}
+                          exploding={isExploding}
+                          justAdded={false}
+                          currentPlayerColor={palette[0]}
+                          onTap={()=>{}}
+                        />
+                      );
+                    })}
+                  </div>
+                ))}
+                {travelers.map(t => (
+                  <window.CRTraveler key={t.id} from={t.from} to={t.to} color={t.color}
+                    shape={shape} cellSize={cellSize} duration={900} />
+                ))}
+                {bursts.map(b => (
+                  <window.CRBurst key={b.id} c={b.c} r={b.r} color={b.color} cellSize={cellSize} />
+                ))}
+              </div>
+            </div>
+            <div style={{
+              padding: '8px 16px 40px', textAlign: 'center',
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 10, letterSpacing: 2, opacity: 0.5,
+            }}>// CRITICAL CASCADE IN PROGRESS</div>
+          </div>
+        </window.CRGridBg>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<Root />);
+  </script>
+</body>
+</html>
