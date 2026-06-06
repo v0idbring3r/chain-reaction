@@ -117,14 +117,14 @@ const styles = StyleSheet.create({
   backButton: {
     alignSelf: 'center',
     borderWidth: 2,
-    borderColor: THEME.textSecondary,
+    borderColor: '#00E5FF',
     borderRadius: 12,
     paddingHorizontal: 32,
     paddingVertical: 12,
     marginTop: 40,
   },
   backButtonText: {
-    color: THEME.textSecondary,
+    color: '#00E5FF',
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 2,

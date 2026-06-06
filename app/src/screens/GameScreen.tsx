@@ -53,6 +53,8 @@ export function GameScreen({ navigation }: Props) {
   const lastMoveSteps = useGameStore(s => s.lastMoveSteps);
   const pauseGame = useGameStore(s => s.pauseGame);
   const resumeGame = useGameStore(s => s.resumeGame);
+  const resetGame = useGameStore(s => s.resetGame);
+  const startGame = useGameStore(s => s.startGame);
   const goHome = useGameStore(s => s.goHome);
   const applyExplosionStep = useGameStore(s => s.applyExplosionStep);
   const finishExplosionSequence = useGameStore(s => s.finishExplosionSequence);
@@ -60,6 +62,7 @@ export function GameScreen({ navigation }: Props) {
   const [travelers, setTravelers] = useState<TravelerData[]>([]);
   const [particles, setParticles] = useState<ParticleData[]>([]);
   const [explodingCells, setExplodingCells] = useState<Set<string>>(new Set());
+  const [showRestartConfirm, setShowRestartConfirm] = useState(false);
   const sequencingRef = useRef(false);
 
   const { width, height } = useWindowDimensions();
@@ -221,9 +224,41 @@ export function GameScreen({ navigation }: Props) {
         </View>
       </View>
 
-      <HapticPressable style={styles.pauseButton} onPress={pauseGame}>
-        <Text style={styles.pauseText}>PAUSE</Text>
-      </HapticPressable>
+      <View style={styles.toolbar}>
+        <HapticPressable
+          style={styles.toolbarButton}
+          onPress={() => setShowRestartConfirm(true)}
+        >
+          <Text style={styles.toolbarIcon}>{'⟳︎'}</Text>
+        </HapticPressable>
+        <HapticPressable style={styles.toolbarButton} onPress={pauseGame}>
+          <Text style={styles.toolbarIconLight}>{'⏸︎'}</Text>
+        </HapticPressable>
+      </View>
+
+      {showRestartConfirm && (
+        <View style={styles.overlay}>
+          <View style={styles.pauseMenu}>
+            <Text style={styles.pauseTitle}>RESTART?</Text>
+            <Text style={styles.confirmText}>Are you sure you want to restart?</Text>
+            <HapticPressable
+              style={styles.menuButton}
+              onPress={() => {
+                setShowRestartConfirm(false);
+                startGame();
+              }}
+            >
+              <Text style={styles.menuButtonText}>RESTART</Text>
+            </HapticPressable>
+            <HapticPressable
+              style={styles.menuButton}
+              onPress={() => setShowRestartConfirm(false)}
+            >
+              <Text style={styles.menuButtonText}>CANCEL</Text>
+            </HapticPressable>
+          </View>
+        </View>
+      )}
 
       {isPaused && (
         <View style={styles.overlay}>
@@ -242,13 +277,13 @@ export function GameScreen({ navigation }: Props) {
               <Text style={styles.menuButtonText}>SETTINGS</Text>
             </HapticPressable>
             <HapticPressable
-              style={[styles.menuButton, styles.menuButtonQuit]}
+              style={styles.menuButton}
               onPress={() => {
                 goHome();
                 navigation.navigate('Home');
               }}
             >
-              <Text style={styles.menuButtonTextQuit}>QUIT</Text>
+              <Text style={styles.menuButtonText}>QUIT</Text>
             </HapticPressable>
           </View>
         </View>
@@ -292,17 +327,25 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-  pauseButton: {
-    alignSelf: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 10,
+  toolbar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 32,
     marginBottom: 16,
   },
-  pauseText: {
-    color: THEME.textSecondary,
-    fontSize: 12,
-    fontWeight: '600',
-    letterSpacing: 2,
+  toolbarButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  toolbarIcon: {
+    color: '#00E5FF',
+    fontSize: 38,
+    fontWeight: '900',
+  },
+  toolbarIconLight: {
+    color: '#00E5FF',
+    fontSize: 38,
+    fontWeight: '300',
   },
   overlay: {
     position: 'absolute',
@@ -325,6 +368,12 @@ const styles = StyleSheet.create({
     letterSpacing: 4,
     marginBottom: 8,
   },
+  confirmText: {
+    color: THEME.textSecondary,
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: 8,
+  },
   menuButton: {
     borderWidth: 2,
     borderColor: '#00E5FF',
@@ -336,15 +385,6 @@ const styles = StyleSheet.create({
   },
   menuButtonText: {
     color: '#00E5FF',
-    fontSize: 16,
-    fontWeight: '700',
-    letterSpacing: 2,
-  },
-  menuButtonQuit: {
-    borderColor: THEME.textSecondary,
-  },
-  menuButtonTextQuit: {
-    color: THEME.textSecondary,
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 2,

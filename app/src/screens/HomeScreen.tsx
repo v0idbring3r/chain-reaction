@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   settingsText: {
-    color: THEME.textSecondary,
+    color: '#00E5FF',
     fontSize: 14,
     fontWeight: '600',
     letterSpacing: 2,
