@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation.types';
@@ -9,11 +9,16 @@ import { CR_PALETTES, CR_PLAYER_NAMES, THEME } from '../utils/colors';
 type Props = NativeStackScreenProps<RootStackParamList, 'Win'>;
 
 export function WinScreen({ navigation }: Props) {
-  const winner = useGameStore(s => s.winner);
-  const paletteKey = useGameStore(s => s.paletteKey);
+  const [snapshot] = useState(() => {
+    const { winner, paletteKey } = useGameStore.getState();
+    return { winner, paletteKey };
+  });
+
   const resetGame = useGameStore(s => s.resetGame);
   const goHome = useGameStore(s => s.goHome);
 
+  const winner = snapshot.winner;
+  const paletteKey = snapshot.paletteKey;
   const winnerColor = winner !== null ? getPlayerColor(paletteKey, winner) : '#FFFFFF';
   const winnerName = winner !== null ? CR_PLAYER_NAMES[winner] : 'UNKNOWN';
   const palette = CR_PALETTES[paletteKey];
