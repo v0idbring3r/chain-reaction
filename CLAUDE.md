@@ -91,3 +91,7 @@ The `app/.npmrc` pins `registry=https://registry.npmjs.org/`. Do NOT use interna
 ## Architecture Documentation
 
 **`ARCHITECTURE.md` must be kept up to date** whenever modules, components, or data flows are added or changed. It contains ASCII diagrams showing component responsibilities and interactions. Update the "Current Implementation Status" table and any affected diagrams when completing a phase or adding new modules.
+
+## Git Commits
+
+Do NOT add `Co-Authored-By` lines to commit messages.
