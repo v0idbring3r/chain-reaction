@@ -14,6 +14,8 @@ Phases 1–3 complete. The game is playable with full animations.
 
 **Next: Phase 4 (Firebase multiplayer) or Phase 5 (AI opponents) — both deferred.**
 
+**Pending: Settings screen** — needs UI to toggle `delayWinScreen` (show final board before win screen), haptics, sound. Store already has `delayWinScreen` flag (default: true) and `setDelayWinScreen` action.
+
 See `docs/PHASES.md` for the full phased plan.
 
 ## Tech Stack

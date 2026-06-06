@@ -12,6 +12,7 @@ interface GameState {
   playerCount: number;
   gridOption: GridOption;
   paletteKey: PaletteKey;
+  delayWinScreen: boolean;
   board: Board;
   currentPlayer: number;
   hasPlayed: Set<number>;
@@ -31,6 +32,7 @@ interface GameActions {
   setPlayerCount: (count: number) => void;
   setGridOption: (option: GridOption) => void;
   setPaletteKey: (key: PaletteKey) => void;
+  setDelayWinScreen: (value: boolean) => void;
   startGame: () => void;
   playCell: (c: number, r: number) => boolean;
   applyExplosionStep: (stepIndex: number) => void;
@@ -81,6 +83,7 @@ const INITIAL_STATE = {
   playerCount: MIN_PLAYERS,
   gridOption: DEFAULT_GRID,
   paletteKey: 'neon' as PaletteKey,
+  delayWinScreen: true,
   board: createInitialBoard(),
   currentPlayer: 0,
   hasPlayed: new Set<number>(),
@@ -102,6 +105,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   setPlayerCount: (count) => set({ playerCount: count }),
   setGridOption: (option) => set({ gridOption: option }),
   setPaletteKey: (key) => set({ paletteKey: key }),
+  setDelayWinScreen: (value) => set({ delayWinScreen: value }),
 
   startGame: () => {
     const { gridOption, playerCount } = get();

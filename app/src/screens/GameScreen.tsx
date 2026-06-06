@@ -17,6 +17,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Game'>;
 const BOARD_PADDING = 16;
 const TRAVEL_DURATION = 350;
 const CHAIN_DELAY = 250;
+const WIN_REVEAL_DELAY = 1000;
 
 interface TravelerData {
   id: string;
@@ -144,6 +145,12 @@ export function GameScreen({ navigation }: Props) {
       setTravelers([]);
       setParticles([]);
       setExplodingCells(new Set());
+
+      const { pendingWinner, delayWinScreen } = useGameStore.getState();
+      if (pendingWinner !== null && delayWinScreen) {
+        await delay(WIN_REVEAL_DELAY);
+      }
+
       finishExplosionSequence();
       sequencingRef.current = false;
     };
