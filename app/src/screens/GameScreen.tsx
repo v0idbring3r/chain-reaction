@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation.types';
 import { useGameStore, getPlayerColor, getOrbCounts } from '../store/gameStore';
-import { neighbors } from '../engine/GameEngine';
+import { neighbors, ownersAlive } from '../engine/GameEngine';
 import { ExplosionStep } from '../types/game.types';
 import { Grid, cellKey } from '../components/Grid';
 import { PlayerTab } from '../components/PlayerTab';
@@ -140,14 +140,19 @@ export function GameScreen({ navigation }: Props) {
 
         // Clear particles after their animation completes
         setParticles([]);
+
+        // Skip remaining steps if winner detected and delay setting is off
+        if (!useGameStore.getState().delayWinScreen && ownersAlive(step.boardAfter).size <= 1) {
+          break;
+        }
       }
 
       setTravelers([]);
       setParticles([]);
       setExplodingCells(new Set());
 
-      const { pendingWinner, delayWinScreen } = useGameStore.getState();
-      if (pendingWinner !== null && delayWinScreen) {
+      const { pendingWinner } = useGameStore.getState();
+      if (pendingWinner !== null) {
         await delay(WIN_REVEAL_DELAY);
       }
 

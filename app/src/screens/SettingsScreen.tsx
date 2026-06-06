@@ -47,7 +47,7 @@ export function SettingsScreen({ navigation }: Props) {
       <View style={styles.section}>
         <SettingRow
           label="DELAY WIN SCREEN"
-          description="Show final board state before the win screen"
+          description="Finish all explosions before showing the win screen"
           value={delayWinScreen}
           onValueChange={setDelayWinScreen}
         />
