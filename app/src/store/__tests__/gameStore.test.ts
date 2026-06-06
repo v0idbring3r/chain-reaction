@@ -101,14 +101,14 @@ describe('setters', () => {
 
 describe('startGame', () => {
   it('transitions to playing phase with correct board dimensions', () => {
-    useGameStore.getState().setGridOption(CR_GRID_OPTIONS[0]); // 6x4
+    useGameStore.getState().setGridOption(CR_GRID_OPTIONS[0]); // 4x6
     useGameStore.getState().setPlayerCount(3);
     useGameStore.getState().startGame();
 
     const state = useGameStore.getState();
     expect(state.phase).toBe('playing');
-    expect(state.board.cols).toBe(6);
-    expect(state.board.rows).toBe(4);
+    expect(state.board.cols).toBe(4);
+    expect(state.board.rows).toBe(6);
     expect(state.playerCount).toBe(3);
     expect(state.currentPlayer).toBe(0);
     expect(state.winner).toBeNull();
