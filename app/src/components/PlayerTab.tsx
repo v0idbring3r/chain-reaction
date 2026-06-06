@@ -17,7 +17,7 @@ export function PlayerTab({ name, color, orbCount, isActive, isEliminated }: Pla
     <View style={[styles.container, { opacity, borderColor: isActive ? color : 'transparent' }]}>
       <View style={[styles.dot, { backgroundColor: color }]} />
       <Text style={[styles.name, { color: isActive ? color : THEME.textSecondary }]}>
-        {name}
+        {name}{isEliminated ? ' (E)' : ''}
       </Text>
       <Text style={[styles.count, { color: THEME.textMono }]}>
         {orbCount}
