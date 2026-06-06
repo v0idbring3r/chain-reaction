@@ -12,13 +12,17 @@
 ┌─────────────────────────────────────────────────────────────┐
 │                      Screens                                │
 │  HomeScreen ─► GameSetupScreen ─► GameScreen ─► WinScreen   │
+│                                       │                     │
+│                                  SettingsScreen             │
 └──────────────────────┬──────────────────────────────────────┘
                        │ uses
                        ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                    Components                               │
 │  Grid  ──►  Cell  ──►  AtomCluster  ──►  Orb               │
-│  PlayerTab                                                  │
+│  TravelerOrb                                                │
+│  ExplosionParticles                                         │
+│  Confetti                                                   │
 └──────────────────────┬──────────────────────────────────────┘
                        │ reads/writes
                        ▼
@@ -41,6 +45,7 @@
 │                      Utils                                  │
 │  constants.ts (grid options, limits)                        │
 │  colors.ts (palettes, player names, theme)                  │
+│  haptics.ts (haptic feedback effects)                       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -70,7 +75,7 @@ playMove(board, c, r, playerId, playerCount, hasPlayed)
     │
     ├── Place orb (clone board, increment count, set owner)
     │
-    └── resolveChainReactions(board, playerCount, hasPlayed)
+    └── resolveChainReactions(board)
             │
             └── Loop:
                 ├── findExplodingCells(board)
@@ -80,22 +85,22 @@ playMove(board, c, r, playerId, playerCount, hasPlayed)
                 │       ├── Subtract criticalMass from each exploding cell
                 │       └── Add 1 orb to each neighbor, set owner
                 │
-                ├── Record ExplosionStep (snapshot)
-                │
-                └── Check win condition (all played + 1 owner left)
+                └── Record ExplosionStep (snapshot)
 ```
 
 Key design decisions:
 - **Immutable interface**: `playMove` clones the board before mutating. Callers never see mutation.
 - **BFS-style waves**: All cells at critical mass explode simultaneously per wave, not one at a time.
+- **Full chain resolution**: Chains always run to completion regardless of win state. Win detection is the store's responsibility.
 - **Runaway guard**: Hard limit of 400 iterations prevents infinite loops.
 
 ### Utils (`src/utils/`)
 
-Static configuration. No logic, no state.
+Static configuration and side-effect utilities.
 
-- **`constants.ts`** — Grid size presets (`6×4`, `9×6`, `12×8`), player count bounds, runaway guard limit
+- **`constants.ts`** — Grid size presets (`4×6`, `6×9`, `8×12`), player count bounds, runaway guard limit
 - **`colors.ts`** — Three color palettes (neon/arcade/toxic), player names, theme colors
+- **`haptics.ts`** — Haptic feedback functions (`hapticPlace`, `hapticExplode`, `hapticWin`). Each checks the store's `hapticsEnabled` flag before firing.
 
 ### Store (`src/store/gameStore.ts`)
 
@@ -104,8 +109,10 @@ Zustand store wrapping the engine. Manages:
 - Current board state and turn tracking
 - Player elimination via `ownersAlive` check after each move
 - Win detection (all players played + single owner remaining)
-- Game settings (player count, grid size, palette)
+- Game settings (player count, grid size, palette, delayWinScreen, hapticsEnabled, soundEnabled)
 - Explosion animation state (`animatingExplosion`, `lastMoveSteps`, pending board/winner)
+
+Settings (`delayWinScreen`, `hapticsEnabled`, `soundEnabled`) persist across `goHome()` and `resetGame()` — they are not reset with game state.
 
 Key actions:
 - `playCell(c, r)` — validates move, calls engine. If explosions: sets pre-explosion board, stores steps, enters animation mode. If no explosions: applies final board immediately.
@@ -120,15 +127,18 @@ Exported helpers:
 
 ### Components (`src/components/`)
 
-React Native UI components with Reanimated 3 animations:
-- **Grid** — reads board from store, computes responsive cell size using full screen dimensions (width minus padding, height minus 140px HUD reserve), passes `criticalSoon` and `isExploding` flags to Cells. Scales to any phone or tablet.
-- **Cell** — Pressable with wobble animation (cr-wobble) when near critical mass, explosion flash overlay (cr-explode-flash)
+React Native UI components with Reanimated 3 animations.
+
+**Colocated effects principle**: Each component owns its own animation + haptic (+ sound) triggers. For example, `Orb` fires `hapticPlace` on mount alongside its pop animation, `Cell` fires `hapticExplode` when its flash triggers, and `Confetti` fires `hapticWin` on mount. This ensures effects never drift apart.
+
+- **Grid** — reads board from store, computes responsive cell size using full screen dimensions (width minus padding, height minus 140px HUD reserve), passes `criticalSoon` and `isExploding` flags to Cells
+- **Cell** — Pressable with wobble animation (cr-wobble) when near critical mass, explosion flash overlay + haptic (cr-explode-flash)
 - **AtomCluster** — positions 1-3 Orbs using absolute layout within a cell
-- **Orb** — Animated.View with pop on mount (cr-pop) and idle float (cr-atom-orbit)
-- **PlayerTab** — HUD element showing player dot, name, orb count
+- **Orb** — Animated.View with pop + haptic on mount (cr-pop) and idle float (cr-atom-orbit)
+- **PlayerTab** — HUD element showing player dot, name (with "(E)" if eliminated), orb count
 - **TravelerOrb** — absolutely positioned orb that flies between cells during explosions (cr-travel)
 - **ExplosionParticles** — 8 radial scatter dots on explosion (cr-particle)
-- **Confetti** — 20 staggered particles for win celebration (cr-celebrate)
+- **Confetti** — 20 staggered particles + haptic for win celebration (cr-celebrate)
 
 ### Screens (`src/screens/`)
 
@@ -136,17 +146,21 @@ Stack navigation via `@react-navigation/native-stack`:
 
 ```
 Home ──► Setup ──► Game ──► Win
-                     │        │
-                     │  ┌─────┘
-                     │  ▼
-                     Setup (Play Again)
-                     Home  (Home button)
+  │                  │        │
+  │                  │  ┌─────┘
+  │                  │  ▼
+  │                  Setup (Play Again)
+  │                  Home  (Home button)
+  │                  │
+  ▼                  ▼
+Settings ◄──── Pause Menu
 ```
 
-- **HomeScreen** — title + START GAME button
+- **HomeScreen** — title + START GAME + SETTINGS buttons
 - **GameSetupScreen** — player count (2-4) + grid size selector + START button
-- **GameScreen** — HUD + turn indicator + Grid + explosion sequencer overlay (TravelerOrbs + ExplosionParticles) + pause menu
+- **GameScreen** — HUD + turn indicator + Grid + explosion sequencer overlay (TravelerOrbs + ExplosionParticles) + pause menu (RESUME / SETTINGS / QUIT)
 - **WinScreen** — winner announcement + confetti + PLAY AGAIN / HOME buttons
+- **SettingsScreen** — toggles for delay win screen, haptics, sound. Accessible from Home and pause menu
 
 ## Data Flow
 
@@ -191,8 +205,10 @@ gameStore.playCell(col, row)
 | Engine | Done | 100% |
 | Constants | Done | 100% |
 | Colors | Done | 100% |
+| Haptics | Done | 100% |
 | Store | Done | 100% |
 | Components | Done | N/A (UI only) |
 | Screens | Done | N/A (UI only) |
 | Animations | Done | N/A (Reanimated) |
-| Haptics/Sound | Phase 3b | — |
+| Settings | Done | N/A (UI only) |
+| Sound | Pending | — |

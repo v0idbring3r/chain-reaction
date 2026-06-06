@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { View, Text, Pressable, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation.types';
@@ -11,6 +11,7 @@ import { PlayerTab } from '../components/PlayerTab';
 import { TravelerOrb } from '../components/TravelerOrb';
 import { ExplosionParticles } from '../components/ExplosionParticles';
 import { CR_PALETTES, CR_PLAYER_NAMES, THEME } from '../utils/colors';
+import { HapticPressable } from '../components/HapticPressable';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Game'>;
 
@@ -52,7 +53,7 @@ export function GameScreen({ navigation }: Props) {
   const lastMoveSteps = useGameStore(s => s.lastMoveSteps);
   const pauseGame = useGameStore(s => s.pauseGame);
   const resumeGame = useGameStore(s => s.resumeGame);
-  const resetGame = useGameStore(s => s.resetGame);
+  const goHome = useGameStore(s => s.goHome);
   const applyExplosionStep = useGameStore(s => s.applyExplosionStep);
   const finishExplosionSequence = useGameStore(s => s.finishExplosionSequence);
 
@@ -220,18 +221,18 @@ export function GameScreen({ navigation }: Props) {
         </View>
       </View>
 
-      <Pressable style={styles.pauseButton} onPress={pauseGame}>
+      <HapticPressable style={styles.pauseButton} onPress={pauseGame}>
         <Text style={styles.pauseText}>PAUSE</Text>
-      </Pressable>
+      </HapticPressable>
 
       {isPaused && (
         <View style={styles.overlay}>
           <View style={styles.pauseMenu}>
             <Text style={styles.pauseTitle}>PAUSED</Text>
-            <Pressable style={styles.menuButton} onPress={resumeGame}>
+            <HapticPressable style={styles.menuButton} onPress={resumeGame}>
               <Text style={styles.menuButtonText}>RESUME</Text>
-            </Pressable>
-            <Pressable
+            </HapticPressable>
+            <HapticPressable
               style={styles.menuButton}
               onPress={() => {
                 resumeGame();
@@ -239,16 +240,16 @@ export function GameScreen({ navigation }: Props) {
               }}
             >
               <Text style={styles.menuButtonText}>SETTINGS</Text>
-            </Pressable>
-            <Pressable
+            </HapticPressable>
+            <HapticPressable
               style={[styles.menuButton, styles.menuButtonQuit]}
               onPress={() => {
-                resetGame();
-                navigation.navigate('Setup');
+                goHome();
+                navigation.navigate('Home');
               }}
             >
               <Text style={styles.menuButtonTextQuit}>QUIT</Text>
-            </Pressable>
+            </HapticPressable>
           </View>
         </View>
       )}

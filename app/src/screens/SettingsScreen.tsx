@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, Text, Pressable, Switch, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation.types';
 import { useGameStore } from '../store/gameStore';
+import { HapticPressable } from '../components/HapticPressable';
+import { HapticSwitch } from '../components/HapticSwitch';
 import { THEME } from '../utils/colors';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Settings'>;
@@ -22,7 +24,7 @@ function SettingRow({ label, description, value, onValueChange }: SettingRowProp
         <Text style={styles.label}>{label}</Text>
         <Text style={styles.description}>{description}</Text>
       </View>
-      <Switch
+      <HapticSwitch
         value={value}
         onValueChange={onValueChange}
         trackColor={{ false: '#333', true: '#00E5FF55' }}
@@ -65,9 +67,9 @@ export function SettingsScreen({ navigation }: Props) {
         />
       </View>
 
-      <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
+      <HapticPressable style={styles.backButton} onPress={() => navigation.goBack()}>
         <Text style={styles.backButtonText}>BACK</Text>
-      </Pressable>
+      </HapticPressable>
     </SafeAreaView>
   );
 }

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation.types';
 import { useGameStore, getPlayerColor } from '../store/gameStore';
 import { Confetti } from '../components/Confetti';
+import { HapticPressable } from '../components/HapticPressable';
 import { CR_PALETTES, CR_PLAYER_NAMES, THEME } from '../utils/colors';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Win'>;
@@ -44,19 +45,19 @@ export function WinScreen({ navigation }: Props) {
       </Text>
 
       <View style={styles.buttonGroup}>
-        <Pressable
+        <HapticPressable
           style={[styles.button, { borderColor: winnerColor }]}
           onPress={handlePlayAgain}
         >
           <Text style={[styles.buttonText, { color: winnerColor }]}>PLAY AGAIN</Text>
-        </Pressable>
+        </HapticPressable>
 
-        <Pressable
+        <HapticPressable
           style={[styles.button, { borderColor: THEME.textSecondary }]}
           onPress={handleHome}
         >
           <Text style={[styles.buttonText, { color: THEME.textSecondary }]}>HOME</Text>
-        </Pressable>
+        </HapticPressable>
       </View>
     </View>
   );

@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation.types';
+import { HapticPressable } from '../components/HapticPressable';
 import { THEME } from '../utils/colors';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
@@ -10,18 +11,18 @@ export function HomeScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>CHAIN{'\n'}REACTION</Text>
-      <Pressable
+      <HapticPressable
         style={styles.button}
         onPress={() => navigation.navigate('Setup')}
       >
         <Text style={styles.buttonText}>START GAME</Text>
-      </Pressable>
-      <Pressable
+      </HapticPressable>
+      <HapticPressable
         style={styles.settingsButton}
         onPress={() => navigation.navigate('Settings')}
       >
         <Text style={styles.settingsText}>SETTINGS</Text>
-      </Pressable>
+      </HapticPressable>
     </View>
   );
 }

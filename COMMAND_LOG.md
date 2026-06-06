@@ -31,3 +31,6 @@ All shell commands run during development of this project, in chronological orde
 20. `npx expo install react-native-worklets` — Fix Reanimated NativeWorklets crash on Expo Go
 21. `npx tsc --noEmit` — Type check Settings screen additions (zero errors)
 22. `npx jest --coverage --watchman=false` — Run tests with coverage (84 tests, 100% all metrics)
+23. `npx expo install expo-haptics` — Install haptic feedback package
+24. `npx tsc --noEmit` — Type check haptics integration (zero errors)
+25. `npx jest --coverage --watchman=false` — Run tests with coverage (92 tests, 100% all metrics)

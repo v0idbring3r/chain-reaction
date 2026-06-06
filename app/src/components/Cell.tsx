@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -11,7 +11,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Cell as CellType } from '../types/game.types';
 import { AtomCluster } from './AtomCluster';
+import { HapticPressable } from './HapticPressable';
 import { THEME } from '../utils/colors';
+import { hapticExplode } from '../utils/haptics';
 
 interface CellProps {
   cell: CellType;
@@ -74,6 +76,7 @@ export function Cell({ cell, cellSize, color, onPress, criticalSoon, isExploding
 
   useEffect(() => {
     if (isExploding) {
+      hapticExplode();
       flashScale.value = 0.4;
       flashOpacity.value = 0;
       flashScale.value = withTiming(1.4, { duration: 200, easing: Easing.out(Easing.ease) });
@@ -90,7 +93,7 @@ export function Cell({ cell, cellSize, color, onPress, criticalSoon, isExploding
   }));
 
   return (
-    <Pressable onPress={onPress}>
+    <HapticPressable onPress={onPress}>
       <Animated.View
         style={[
           styles.cell,
@@ -115,7 +118,7 @@ export function Cell({ cell, cellSize, color, onPress, criticalSoon, isExploding
           pointerEvents="none"
         />
       </Animated.View>
-    </Pressable>
+    </HapticPressable>
   );
 }
 

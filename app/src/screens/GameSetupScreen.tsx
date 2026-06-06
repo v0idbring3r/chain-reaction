@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation.types';
 import { useGameStore } from '../store/gameStore';
 import { CR_GRID_OPTIONS, MIN_PLAYERS, MAX_PLAYERS } from '../utils/constants';
+import { HapticPressable } from '../components/HapticPressable';
 import { THEME } from '../utils/colors';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Setup'>;
@@ -30,7 +31,7 @@ export function GameSetupScreen({ navigation }: Props) {
       <Text style={styles.heading}>PLAYERS</Text>
       <View style={styles.optionRow}>
         {PLAYER_COUNTS.map(count => (
-          <Pressable
+          <HapticPressable
             key={count}
             style={[styles.option, count === playerCount && styles.optionSelected]}
             onPress={() => setPlayerCount(count)}
@@ -38,14 +39,14 @@ export function GameSetupScreen({ navigation }: Props) {
             <Text style={[styles.optionText, count === playerCount && styles.optionTextSelected]}>
               {count}
             </Text>
-          </Pressable>
+          </HapticPressable>
         ))}
       </View>
 
       <Text style={styles.heading}>GRID SIZE</Text>
       <View style={styles.optionRow}>
         {CR_GRID_OPTIONS.map(option => (
-          <Pressable
+          <HapticPressable
             key={option.key}
             style={[styles.option, option.key === gridOption.key && styles.optionSelected]}
             onPress={() => setGridOption(option)}
@@ -53,13 +54,13 @@ export function GameSetupScreen({ navigation }: Props) {
             <Text style={[styles.optionText, option.key === gridOption.key && styles.optionTextSelected]}>
               {option.label}
             </Text>
-          </Pressable>
+          </HapticPressable>
         ))}
       </View>
 
-      <Pressable style={styles.startButton} onPress={handleStart}>
+      <HapticPressable style={styles.startButton} onPress={handleStart}>
         <Text style={styles.startButtonText}>START</Text>
-      </Pressable>
+      </HapticPressable>
     </View>
   );
 }
