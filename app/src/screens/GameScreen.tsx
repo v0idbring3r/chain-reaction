@@ -60,8 +60,8 @@ export function GameScreen({ navigation }: Props) {
   const sequencingRef = useRef(false);
 
   const { width, height } = useWindowDimensions();
-  const maxBoardWidth = Math.min(width - BOARD_PADDING * 2, 352);
-  const maxBoardHeight = Math.min(height * 0.6, 560);
+  const maxBoardWidth = width - BOARD_PADDING * 2;
+  const maxBoardHeight = height - 140;
   const cellSize = Math.floor(Math.min(maxBoardWidth / board.cols, maxBoardHeight / board.rows));
 
   const orbCounts = getOrbCounts(board);

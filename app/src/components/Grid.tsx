@@ -6,6 +6,7 @@ import { Cell } from './Cell';
 import { CR_PALETTES } from '../utils/colors';
 
 const BOARD_PADDING = 16;
+const HUD_RESERVE = 140;
 
 interface GridProps {
   explodingCells?: ReadonlySet<string>;
@@ -21,8 +22,8 @@ export function Grid({ explodingCells }: GridProps) {
   const playCell = useGameStore(s => s.playCell);
   const { width, height } = useWindowDimensions();
 
-  const maxBoardWidth = Math.min(width - BOARD_PADDING * 2, 352);
-  const maxBoardHeight = Math.min(height * 0.6, 560);
+  const maxBoardWidth = width - BOARD_PADDING * 2;
+  const maxBoardHeight = height - HUD_RESERVE;
   const cellSize = Math.floor(Math.min(maxBoardWidth / board.cols, maxBoardHeight / board.rows));
 
   const palette = CR_PALETTES[paletteKey];
