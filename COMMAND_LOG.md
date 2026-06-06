@@ -27,3 +27,5 @@ All shell commands run during development of this project, in chronological orde
 16. `git init && git branch -m main` — Initialize git repo
 17. `gh repo create chain-reaction --public --source=. --push` — Create GitHub repo and push
 18. `git push origin main` — Push responsive grid fix
+19. `npx expo install --fix` — Downgrade to Expo SDK 54 for App Store Expo Go compatibility
+20. `npx expo install react-native-worklets` — Fix Reanimated NativeWorklets crash on Expo Go

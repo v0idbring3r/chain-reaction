@@ -20,9 +20,9 @@ See `docs/PHASES.md` for the full phased plan.
 
 | Concern | Choice |
 |---|---|
-| Framework | Expo (managed workflow) |
+| Framework | Expo 54 (managed workflow) |
 | Language | TypeScript (strict) |
-| Animations | React Native Reanimated 3 |
+| Animations | React Native Reanimated 4 |
 | State | Zustand |
 | Haptics | expo-haptics |
 | Audio | expo-av |

@@ -46,9 +46,9 @@ npx jest --coverage
 
 | Concern | Choice |
 |---|---|
-| Framework | Expo 56 (managed workflow) |
+| Framework | Expo 54 (managed workflow) |
 | Language | TypeScript (strict) |
-| Animations | React Native Reanimated 3 |
+| Animations | React Native Reanimated 4 |
 | State | Zustand |
 | Navigation | React Navigation (native stack) |
 
