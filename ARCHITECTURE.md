@@ -121,7 +121,7 @@ Exported helpers:
 ### Components (`src/components/`)
 
 React Native UI components with Reanimated 3 animations:
-- **Grid** — reads board from store, computes responsive cell size, passes `criticalSoon` and `isExploding` flags to Cells
+- **Grid** — reads board from store, computes responsive cell size using full screen dimensions (width minus padding, height minus 140px HUD reserve), passes `criticalSoon` and `isExploding` flags to Cells. Scales to any phone or tablet.
 - **Cell** — Pressable with wobble animation (cr-wobble) when near critical mass, explosion flash overlay (cr-explode-flash)
 - **AtomCluster** — positions 1-3 Orbs using absolute layout within a cell
 - **Orb** — Animated.View with pop on mount (cr-pop) and idle float (cr-atom-orbit)
@@ -174,9 +174,9 @@ gameStore.playCell(col, row)
                  for each step:
                    ├── Render TravelerOrbs + ExplosionParticles
                    ├── Trigger Cell flash (cr-explode-flash)
-                   ├── await 220ms (travel)
+                   ├── await 350ms (travel)
                    ├── applyExplosionStep(i) → board = step.boardAfter
-                   └── await 150ms (chain delay)
+                   └── await 250ms (chain delay)
                  finishExplosionSequence()
                    ├── Apply pending winner/elimination/turn
                    └── Set animatingExplosion = false

@@ -25,3 +25,5 @@ All shell commands run during development of this project, in chronological orde
 14. `npm install --save-dev babel-preset-expo` — Install missing Babel preset
 15. `npm install --save-dev jest@29.7.0 @types/jest@29.5.14` — Downgrade Jest to Expo 56 compatible versions
 16. `git init && git branch -m main` — Initialize git repo
+17. `gh repo create chain-reaction --public --source=. --push` — Create GitHub repo and push
+18. `git push origin main` — Push responsive grid fix
