@@ -29,3 +29,5 @@ All shell commands run during development of this project, in chronological orde
 18. `git push origin main` — Push responsive grid fix
 19. `npx expo install --fix` — Downgrade to Expo SDK 54 for App Store Expo Go compatibility
 20. `npx expo install react-native-worklets` — Fix Reanimated NativeWorklets crash on Expo Go
+21. `npx tsc --noEmit` — Type check Settings screen additions (zero errors)
+22. `npx jest --coverage --watchman=false` — Run tests with coverage (84 tests, 100% all metrics)

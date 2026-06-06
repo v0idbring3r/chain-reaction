@@ -345,4 +345,20 @@ describe('playMove', () => {
     // (0,1) captured by player 0, but player 1 still has (2,2)
     expect(ownersAlive(result!.board).has(1)).toBe(true);
   });
+
+  it('chain reactions continue after all opponents are eliminated', () => {
+    // Set up: winning explosion triggers further chain reactions
+    // Corner (0,0) at 1, opponent at (0,1) at 1, player's edge (1,0) at cm-1
+    // Explosion at (0,0) captures (0,1) and pushes (1,0) to critical → further chain
+    const board = makeBoard(3, 3);
+    setBoardCell(board, 0, 0, 1, 0);
+    setBoardCell(board, 0, 1, 1, 1);
+    setBoardCell(board, 1, 0, 2, 0); // edge cm=3, will get +1 from (0,0) => explodes
+
+    const hasPlayed = new Set([0, 1]);
+    const result = playMove(board, 0, 0, 0, 2, hasPlayed);
+    expect(result).not.toBeNull();
+    // Should have at least 2 steps: (0,0) explodes, then (1,0) explodes
+    expect(result!.steps.length).toBeGreaterThanOrEqual(2);
+  });
 });

@@ -79,6 +79,8 @@ describe('initial state', () => {
     expect(state.lastMoveSteps).toEqual([]);
     expect(state.hasPlayed.size).toBe(0);
     expect(state.eliminatedPlayers.size).toBe(0);
+    expect(state.hapticsEnabled).toBe(true);
+    expect(state.soundEnabled).toBe(true);
   });
 });
 
@@ -103,6 +105,20 @@ describe('setters', () => {
     expect(useGameStore.getState().delayWinScreen).toBe(false);
     useGameStore.getState().setDelayWinScreen(true);
     expect(useGameStore.getState().delayWinScreen).toBe(true);
+  });
+
+  it('setHapticsEnabled updates setting', () => {
+    useGameStore.getState().setHapticsEnabled(false);
+    expect(useGameStore.getState().hapticsEnabled).toBe(false);
+    useGameStore.getState().setHapticsEnabled(true);
+    expect(useGameStore.getState().hapticsEnabled).toBe(true);
+  });
+
+  it('setSoundEnabled updates setting', () => {
+    useGameStore.getState().setSoundEnabled(false);
+    expect(useGameStore.getState().soundEnabled).toBe(false);
+    useGameStore.getState().setSoundEnabled(true);
+    expect(useGameStore.getState().soundEnabled).toBe(true);
   });
 });
 

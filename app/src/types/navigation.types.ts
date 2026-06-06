@@ -3,4 +3,5 @@ export type RootStackParamList = {
   Setup: undefined;
   Game: undefined;
   Win: undefined;
+  Settings: undefined;
 };

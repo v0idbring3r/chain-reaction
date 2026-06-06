@@ -17,7 +17,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Game'>;
 const BOARD_PADDING = 16;
 const TRAVEL_DURATION = 350;
 const CHAIN_DELAY = 250;
-const WIN_REVEAL_DELAY = 1000;
+const WIN_REVEAL_DELAY = 500;
 
 interface TravelerData {
   id: string;
@@ -225,6 +225,15 @@ export function GameScreen({ navigation }: Props) {
             <Text style={styles.pauseTitle}>PAUSED</Text>
             <Pressable style={styles.menuButton} onPress={resumeGame}>
               <Text style={styles.menuButtonText}>RESUME</Text>
+            </Pressable>
+            <Pressable
+              style={styles.menuButton}
+              onPress={() => {
+                resumeGame();
+                navigation.navigate('Settings');
+              }}
+            >
+              <Text style={styles.menuButtonText}>SETTINGS</Text>
             </Pressable>
             <Pressable
               style={[styles.menuButton, styles.menuButtonQuit]}

@@ -16,6 +16,12 @@ export function HomeScreen({ navigation }: Props) {
       >
         <Text style={styles.buttonText}>START GAME</Text>
       </Pressable>
+      <Pressable
+        style={styles.settingsButton}
+        onPress={() => navigation.navigate('Settings')}
+      >
+        <Text style={styles.settingsText}>SETTINGS</Text>
+      </Pressable>
     </View>
   );
 }
@@ -47,6 +53,16 @@ const styles = StyleSheet.create({
     color: '#00E5FF',
     fontSize: 18,
     fontWeight: '700',
+    letterSpacing: 2,
+  },
+  settingsButton: {
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+  },
+  settingsText: {
+    color: THEME.textSecondary,
+    fontSize: 14,
+    fontWeight: '600',
     letterSpacing: 2,
   },
 });

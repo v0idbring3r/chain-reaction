@@ -110,9 +110,8 @@ function applyExplosions(board: Board, exploding: ExplodingCell[]): void {
   }
 }
 
-function resolveChainReactions(board: Board, playerCount: number, hasPlayed: ReadonlySet<number>): ExplosionStep[] {
+function resolveChainReactions(board: Board): ExplosionStep[] {
   const steps: ExplosionStep[] = [];
-  const allPlayersHaveMoved = hasPlayed.size >= playerCount;
 
   for (let safety = 0; safety < RUNAWAY_GUARD_LIMIT; safety++) {
     const exploding = findExplodingCells(board);
@@ -120,8 +119,6 @@ function resolveChainReactions(board: Board, playerCount: number, hasPlayed: Rea
 
     applyExplosions(board, exploding);
     steps.push({ explodingCells: exploding, boardAfter: cloneBoard(board) });
-
-    if (allPlayersHaveMoved && ownersAlive(board).size <= 1) break;
   }
 
   return steps;
@@ -145,7 +142,7 @@ export function playMove(
   const updatedHasPlayed = new Set(hasPlayed);
   updatedHasPlayed.add(playerId);
 
-  const steps = resolveChainReactions(mutableBoard, playerCount, updatedHasPlayed);
+  const steps = resolveChainReactions(mutableBoard);
 
   return { board: mutableBoard, steps };
 }

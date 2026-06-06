@@ -7,6 +7,7 @@ import { HomeScreen } from './src/screens/HomeScreen';
 import { GameSetupScreen } from './src/screens/GameSetupScreen';
 import { GameScreen } from './src/screens/GameScreen';
 import { WinScreen } from './src/screens/WinScreen';
+import { SettingsScreen } from './src/screens/SettingsScreen';
 import { THEME } from './src/utils/colors';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -27,6 +28,7 @@ export default function App() {
         <Stack.Screen name="Setup" component={GameSetupScreen} />
         <Stack.Screen name="Game" component={GameScreen} />
         <Stack.Screen name="Win" component={WinScreen} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
