@@ -86,6 +86,9 @@ Pre-release polish and technical requirements for App Store submission.
 - Onboarding/tutorial for first-time players (critical mass, capturing rules)
 - Landscape support (currently portrait-only)
 
+**Portability:**
+- Abstract haptics/audio behind a config flag (`useExpoModules`) to support both Expo packages (`expo-haptics`, `expo-audio`) and community RN packages (`react-native-haptic-feedback`, `react-native-sound`). Switching providers should be a one-line config change. Config is internal — not exposed in game settings.
+
 ---
 
 ## Phase 4 — Firebase Multiplayer (Future)

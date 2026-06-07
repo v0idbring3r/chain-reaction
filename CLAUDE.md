@@ -20,6 +20,7 @@ See `docs/PHASES.md` for the full phased plan.
 
 - **Improve sound effects** — Current sounds are ffmpeg-generated sine wave placeholders. Replace with polished game audio from a free SFX library or synth tool. No code changes needed — just drop new WAV files into `app/assets/sounds/`.
 - **Custom fonts** — Orbitron, Rajdhani, JetBrains Mono for the neon arcade aesthetic.
+- **Native module abstraction** — Abstract haptics/audio behind a config flag to support both Expo packages and community RN equivalents (`react-native-haptic-feedback`, `react-native-sound`). Reduces Expo lock-in.
 
 ## Tech Stack
 
