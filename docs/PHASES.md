@@ -1,6 +1,6 @@
 # Implementation Phases
 
-## Phase 1 — Core Game Engine (Pure TypeScript) ✅ NEXT
+## Phase 1 — Core Game Engine (Pure TypeScript) ✅
 
 Build framework-agnostic logic. No React, no UI.
 
@@ -24,7 +24,7 @@ See `docs/GAME_ENGINE.md` for the full logic to port.
 
 ---
 
-## Phase 2 — React Native UI (Local Multiplayer)
+## Phase 2 — React Native UI (Local Multiplayer) ✅
 
 Build the screens and components. Wire up to Phase 1 engine.
 
@@ -44,7 +44,7 @@ Build the screens and components. Wire up to Phase 1 engine.
 
 ---
 
-## Phase 3 — Animations & Polish
+## Phase 3 — Animations & Polish ✅
 
 Add all 7 animations from `docs/ANIMATIONS.md`:
 
@@ -61,6 +61,30 @@ Also:
 - Sound via `expo-av` (placeholder sounds or silence toggle)
 - Screen transitions
 - Settings screen (grid size, sound, haptics)
+
+---
+
+## Phase 3b — App Store Readiness
+
+**Not started.**
+
+Pre-release polish and technical requirements for App Store submission.
+
+**Polish:**
+- Migrate `expo-av` to `expo-audio` (expo-av deprecated, removed in SDK 54)
+- Replace placeholder sound effects with polished game audio
+- Custom fonts (Orbitron, Rajdhani, JetBrains Mono) for neon arcade aesthetic
+- Persist settings (haptics, sound, delayWinScreen) across app restarts via AsyncStorage
+
+**App Store requirements:**
+- App icon (1024×1024) and splash screen
+- EAS Build setup (`eas build --platform ios`) — requires Apple Developer account ($99/year)
+- App Store metadata: screenshots, description, keywords, age rating
+- Privacy policy URL (required even if no data is collected)
+
+**Nice-to-have for v1:**
+- Onboarding/tutorial for first-time players (critical mass, capturing rules)
+- Landscape support (currently portrait-only)
 
 ---
 
