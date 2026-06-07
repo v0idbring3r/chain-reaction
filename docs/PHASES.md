@@ -119,3 +119,37 @@ See project instructions for full Firebase schema.
 - Hard: minimax 3–4 deep or MCTS
 
 `src/engine/AIPlayer.ts` — `selectMove(gameState, difficulty): Promise<Position>`
+
+---
+
+## Phase 6 — Eject to Bare React Native (Future)
+
+**Not started. Deferred.**
+
+Remove Expo managed workflow dependency. One codebase, native iOS + Android projects in the repo, full control over builds.
+
+**Prerequisites:**
+- Complete the native module abstraction (Phase 3b Portability) first — ensures clean swap of Expo packages
+
+**Steps:**
+1. `npx expo prebuild` — generates `ios/` and `android/` directories
+2. Replace Expo-specific packages (or keep them — they work in bare RN too):
+   - `expo-haptics` → `react-native-haptic-feedback`
+   - `expo-audio` → `react-native-sound`
+   - `expo-status-bar` → React Native built-in `StatusBar`
+3. Update Babel config: replace `babel-preset-expo` with `@babel/preset-env` + `react-native-reanimated/plugin`
+4. Run `cd ios && pod install` for iOS native linking
+5. Build iOS via Xcode or `xcodebuild`
+6. Build Android via Android Studio or `./gradlew assembleRelease`
+
+**What stays the same (no changes needed):**
+- Game engine, types, store, all components, all screens
+- `@react-navigation` (not Expo-specific)
+- `react-native-reanimated` (works without Expo)
+- Zustand + AsyncStorage
+- All tests
+
+**When to eject:**
+- When you need a native module Expo doesn't support
+- When you want to avoid Expo's build queue / account
+- When you need full control over Xcode/Gradle configs (e.g., custom native code, specific SDK integrations)
