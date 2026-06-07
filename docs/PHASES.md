@@ -66,15 +66,15 @@ Also:
 
 ## Phase 3b — App Store Readiness
 
-**Not started.**
+**In progress.**
 
 Pre-release polish and technical requirements for App Store submission.
 
 **Polish:**
-- Migrate `expo-av` to `expo-audio` (expo-av deprecated, removed in SDK 54)
+- ~~Migrate `expo-av` to `expo-audio`~~ ✅
+- ~~Persist settings across app restarts via AsyncStorage~~ ✅
 - Replace placeholder sound effects with polished game audio
 - Custom fonts (Orbitron, Rajdhani, JetBrains Mono) for neon arcade aesthetic
-- Persist settings (haptics, sound, delayWinScreen) across app restarts via AsyncStorage
 
 **App Store requirements:**
 - App icon (1024×1024) and splash screen

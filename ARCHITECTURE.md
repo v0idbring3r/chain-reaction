@@ -114,7 +114,7 @@ Zustand store wrapping the engine. Manages:
 - Game settings (player count, grid size, palette, delayWinScreen, hapticsEnabled, soundEnabled)
 - Explosion animation state (`animatingExplosion`, `lastMoveSteps`, pending board/winner)
 
-Settings (`delayWinScreen`, `hapticsEnabled`, `soundEnabled`) persist across `goHome()` and `resetGame()` — they are not reset with game state.
+Settings (`delayWinScreen`, `hapticsEnabled`, `soundEnabled`) persist across app restarts via zustand `persist` middleware + AsyncStorage. They are also preserved across `goHome()` and `resetGame()` — never reset with game state.
 
 Key actions:
 - `playCell(c, r)` — validates move, calls engine. If explosions: sets pre-explosion board, stores steps, enters animation mode. If no explosions: applies final board immediately.

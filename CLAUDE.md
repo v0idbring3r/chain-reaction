@@ -19,8 +19,7 @@ See `docs/PHASES.md` for the full phased plan.
 ## Pending Polish
 
 - **Improve sound effects** — Current sounds are ffmpeg-generated sine wave placeholders. Replace with polished game audio from a free SFX library or synth tool. No code changes needed — just drop new WAV files into `app/assets/sounds/`.
-- **Migrate expo-av to expo-audio** — `expo-av` is deprecated and will be removed in SDK 54. Replace with `expo-audio` package in `src/utils/sounds.ts`.
-- **Phase 3b polish** — Custom fonts (Orbitron, Rajdhani, JetBrains Mono) for the neon arcade aesthetic.
+- **Custom fonts** — Orbitron, Rajdhani, JetBrains Mono for the neon arcade aesthetic.
 
 ## Tech Stack
 
@@ -31,7 +30,8 @@ See `docs/PHASES.md` for the full phased plan.
 | Animations | React Native Reanimated 4 |
 | State | Zustand |
 | Haptics | expo-haptics |
-| Audio | expo-av |
+| Audio | expo-audio |
+| Persistence | zustand/middleware persist + AsyncStorage |
 | Future multiplayer | Firebase (Phase 4, deferred) |
 
 ## Project Structure
