@@ -2,7 +2,6 @@ const { getDefaultConfig } = require('expo/metro-config');
 
 const config = getDefaultConfig(__dirname);
 
-config.resolver.resolverMainFields = ['react-native', 'browser', 'main'];
-config.resolver.sourceExts = config.resolver.sourceExts.filter(ext => ext !== 'mjs');
+config.resolver.unstable_conditionNames = ['browser', 'require', 'react-native'];
 
 module.exports = config;
