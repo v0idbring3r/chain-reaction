@@ -19,6 +19,7 @@ See `docs/PHASES.md` for the full phased plan.
 ## Pending Polish
 
 - **Improve sound effects** — Current sounds are ffmpeg-generated sine wave placeholders. Replace with polished game audio from a free SFX library or synth tool. No code changes needed — just drop new WAV files into `app/assets/sounds/`.
+- **Migrate expo-av to expo-audio** — `expo-av` is deprecated and will be removed in SDK 54. Replace with `expo-audio` package in `src/utils/sounds.ts`.
 - **Phase 3b polish** — Custom fonts (Orbitron, Rajdhani, JetBrains Mono) for the neon arcade aesthetic.
 
 ## Tech Stack
@@ -61,7 +62,6 @@ chain-reaction/
 - **No bloat**: Do not add unused code, speculative abstractions, or dead paths. Every line should be reachable and tested.
 - **No `any` types**: Strict TypeScript throughout. No escape hatches.
 - **Remove unused code**: If something is no longer called, delete it. Don't leave commented-out code or TODO placeholders.
-- **Adhere to architectural patterns**: All code must follow the design patterns documented in `ARCHITECTURE.md` (colocated effects, wrapper components, guard-first functions, immutable state flow, framework-agnostic engine). Read and follow them before making changes.
 
 ## Key Design Decisions
 
@@ -102,3 +102,5 @@ The `app/.npmrc` pins `registry=https://registry.npmjs.org/`. Do NOT use interna
 ## Git Commits
 
 Do NOT add `Co-Authored-By` lines to commit messages.
+
+Do NOT commit or push until the user has had a chance to test and confirms the changes are ready. Always wait for explicit approval before committing.

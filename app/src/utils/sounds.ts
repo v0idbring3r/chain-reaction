@@ -1,7 +1,7 @@
-import { createAudioPlayer, setAudioModeAsync, AudioPlayer } from 'expo-audio';
+import { Audio } from 'expo-av';
 import { useGameStore } from '../store/gameStore';
 
-let playerCache: Record<string, AudioPlayer> = {};
+let soundCache: Record<string, Audio.Sound> = {};
 let loaded = false;
 
 const SOUNDS = {
@@ -15,11 +15,13 @@ type SoundName = keyof typeof SOUNDS;
 export async function loadSounds(): Promise<void> {
   if (loaded) return;
   try {
-    await setAudioModeAsync({
-      playsInSilentMode: true,
+    await Audio.setAudioModeAsync({
+      playsInSilentModeIOS: true,
+      shouldDuckAndroid: true,
     });
     for (const [name, source] of Object.entries(SOUNDS)) {
-      playerCache[name] = createAudioPlayer(source);
+      const { sound } = await Audio.Sound.createAsync(source);
+      soundCache[name] = sound;
     }
     loaded = true;
   } catch (e) {
@@ -28,16 +30,16 @@ export async function loadSounds(): Promise<void> {
 }
 
 export function resetSoundsForTest(): void {
-  playerCache = {};
+  soundCache = {};
   loaded = false;
 }
 
 async function play(name: SoundName): Promise<void> {
   if (!useGameStore.getState().soundEnabled) return;
-  const player = playerCache[name];
-  if (!player) return;
-  await player.seekTo(0);
-  player.play();
+  const sound = soundCache[name];
+  if (!sound) return;
+  await sound.setPositionAsync(0);
+  await sound.playAsync();
 }
 
 export function soundTap(): void {
