@@ -216,3 +216,24 @@ gameStore.playCell(col, row)
 | Animations | Done | N/A (Reanimated) |
 | Settings | Done | N/A (UI only) |
 | Sound | Done | 100% |
+
+## Design Patterns & Principles
+
+These patterns are enforced across the codebase. All new code must adhere to them.
+
+### SOLID Principles
+
+- **Single Responsibility**: Each module has one reason to change. Engine handles game logic, store handles state management, components handle rendering + effects, utils handle cross-cutting concerns.
+- **Open/Closed**: New features extend existing abstractions (e.g., `HapticPressable` wraps `Pressable`) rather than modifying them.
+- **Liskov Substitution**: `HapticPressable` and `HapticSwitch` are drop-in replacements for their RN counterparts — any `Pressable` can be swapped to `HapticPressable` with no behavioral change beyond the added haptic.
+- **Interface Segregation**: Types are granular (`Cell`, `Board`, `Position`, `MoveResult`) rather than monolithic. Store state and actions are defined as separate interfaces.
+- **Dependency Inversion**: The engine depends on abstract types, not on React or Zustand. The store depends on the engine interface, not its implementation details.
+
+### Architectural Patterns
+
+- **Framework-agnostic engine**: `GameEngine.ts` has zero framework imports. It can be tested, reused, or ported independently.
+- **Immutable state flow**: Engine clones before mutating. Callers never see in-place mutation. Store uses Zustand's immutable `set()`.
+- **Colocated effects**: Each component owns its animation + haptic + sound triggers. `HapticPressable` bundles tap haptic + sound. `Cell` bundles explosion flash + haptic + sound. `Confetti` bundles celebration animation + haptic + sound. This prevents effects from drifting apart.
+- **Wrapper components over inline logic**: Cross-cutting concerns (haptics, sound) are handled via wrapper components (`HapticPressable`, `HapticSwitch`) rather than scattered inline calls. One place to maintain, impossible to miss.
+- **Settings persistence**: Only user preferences (`delayWinScreen`, `hapticsEnabled`, `soundEnabled`) are persisted via Zustand `persist` middleware + AsyncStorage. Game state is ephemeral — never persisted.
+- **Guard-first functions**: Side-effect functions (`hapticTap`, `soundTap`, etc.) check their enabled flag as the first line and return early if disabled. No caller needs to check.

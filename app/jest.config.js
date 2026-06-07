@@ -4,6 +4,7 @@ module.exports = {
   testEnvironment: 'node',
   watchman: false,
   roots: ['<rootDir>/src'],
+  setupFiles: ['<rootDir>/src/__mocks__/setupJest.ts'],
   moduleNameMapper: {
     '\\.(wav|mp3|aac)$': '<rootDir>/src/__mocks__/fileMock.js',
   },

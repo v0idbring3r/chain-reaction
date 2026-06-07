@@ -37,3 +37,8 @@ All shell commands run during development of this project, in chronological orde
 26. `npx expo install expo-av` — Install audio playback package
 27. `npx tsc --noEmit` — Type check sound integration (zero errors)
 28. `npx jest --coverage --watchman=false` — Run tests with coverage (101 tests, 100% all metrics)
+29. `npx expo install expo-audio` — Install expo-audio (replacement for deprecated expo-av)
+30. `npm uninstall expo-av` — Remove deprecated expo-av
+31. `npx expo install @react-native-async-storage/async-storage` — Install AsyncStorage for settings persistence
+32. `npx tsc --noEmit` — Type check expo-audio migration + persistence (zero errors)
+33. `npx jest --coverage --watchman=false` — Run tests with coverage (102 tests, 100% all metrics)

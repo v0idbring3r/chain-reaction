@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Board, ExplosionStep, GridOption } from '../types/game.types';
 import { makeBoard, playMove, ownersAlive, countOrbs, cloneBoard } from '../engine/GameEngine';
 import { CR_GRID_OPTIONS, MIN_PLAYERS } from '../utils/constants';
@@ -105,8 +107,10 @@ const INITIAL_STATE = {
   pendingHasPlayed: new Set<number>(),
 };
 
-export const useGameStore = create<GameStore>((set, get) => ({
-  ...INITIAL_STATE,
+export const useGameStore = create<GameStore>()(
+  persist(
+    (set, get) => ({
+      ...INITIAL_STATE,
 
   setPlayerCount: (count) => set({ playerCount: count }),
   setGridOption: (option) => set({ gridOption: option }),
@@ -252,7 +256,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
       soundEnabled,
     });
   },
-}));
+}),
+    {
+      name: 'chain-reaction-settings',
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({
+        delayWinScreen: state.delayWinScreen,
+        hapticsEnabled: state.hapticsEnabled,
+        soundEnabled: state.soundEnabled,
+      }),
+    },
+  ),
+);
 
 export function getPlayerColor(paletteKey: PaletteKey, playerIndex: number): string {
   return CR_PALETTES[paletteKey][playerIndex];
