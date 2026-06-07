@@ -1,22 +1,16 @@
 import { useGameStore } from '../../store/gameStore';
 
-const mockPlayAsync = jest.fn().mockResolvedValue(undefined);
-const mockSetPositionAsync = jest.fn().mockResolvedValue(undefined);
-const mockCreateAsync = jest.fn().mockResolvedValue({
-  sound: {
-    playAsync: mockPlayAsync,
-    setPositionAsync: mockSetPositionAsync,
-  },
+const mockPlay = jest.fn();
+const mockSeekTo = jest.fn().mockResolvedValue(undefined);
+const mockCreateAudioPlayer = jest.fn().mockReturnValue({
+  play: mockPlay,
+  seekTo: mockSeekTo,
 });
 const mockSetAudioModeAsync = jest.fn().mockResolvedValue(undefined);
 
-jest.mock('expo-av', () => ({
-  Audio: {
-    setAudioModeAsync: (...args: unknown[]) => mockSetAudioModeAsync(...args),
-    Sound: {
-      createAsync: (...args: unknown[]) => mockCreateAsync(...args),
-    },
-  },
+jest.mock('expo-audio', () => ({
+  createAudioPlayer: (...args: unknown[]) => mockCreateAudioPlayer(...args),
+  setAudioModeAsync: (...args: unknown[]) => mockSetAudioModeAsync(...args),
 }));
 
 import { loadSounds, soundTap, soundExplode, soundWin, resetSoundsForTest } from '../sounds';
@@ -30,18 +24,15 @@ beforeEach(() => {
 describe('loadSounds', () => {
   it('loads all sound assets', async () => {
     await loadSounds();
-    expect(mockSetAudioModeAsync).toHaveBeenCalledWith({
-      playsInSilentModeIOS: true,
-      shouldDuckAndroid: true,
-    });
-    expect(mockCreateAsync).toHaveBeenCalledTimes(3);
+    expect(mockSetAudioModeAsync).toHaveBeenCalledWith({ playsInSilentMode: true });
+    expect(mockCreateAudioPlayer).toHaveBeenCalledTimes(3);
   });
 
   it('only loads once', async () => {
     await loadSounds();
-    mockCreateAsync.mockClear();
+    mockCreateAudioPlayer.mockClear();
     await loadSounds();
-    expect(mockCreateAsync).not.toHaveBeenCalled();
+    expect(mockCreateAudioPlayer).not.toHaveBeenCalled();
   });
 
   it('handles load failure gracefully', async () => {
@@ -58,8 +49,8 @@ describe('soundTap', () => {
     await loadSounds();
     soundTap();
     await new Promise(r => setTimeout(r, 0));
-    expect(mockSetPositionAsync).toHaveBeenCalledWith(0);
-    expect(mockPlayAsync).toHaveBeenCalled();
+    expect(mockSeekTo).toHaveBeenCalledWith(0);
+    expect(mockPlay).toHaveBeenCalled();
   });
 
   it('does not play when disabled', async () => {
@@ -67,48 +58,54 @@ describe('soundTap', () => {
     useGameStore.getState().setSoundEnabled(false);
     soundTap();
     await new Promise(r => setTimeout(r, 0));
-    expect(mockSetPositionAsync).not.toHaveBeenCalled();
+    expect(mockSeekTo).not.toHaveBeenCalled();
   });
 });
 
 describe('soundExplode', () => {
   it('plays when enabled', async () => {
     await loadSounds();
+    mockPlay.mockClear();
     soundExplode();
     await new Promise(r => setTimeout(r, 0));
-    expect(mockPlayAsync).toHaveBeenCalled();
+    expect(mockPlay).toHaveBeenCalled();
   });
 
   it('does not play when disabled', async () => {
     await loadSounds();
+    mockPlay.mockClear();
+    mockSeekTo.mockClear();
     useGameStore.getState().setSoundEnabled(false);
     soundExplode();
     await new Promise(r => setTimeout(r, 0));
-    expect(mockPlayAsync).not.toHaveBeenCalled();
+    expect(mockPlay).not.toHaveBeenCalled();
   });
 });
 
 describe('soundWin', () => {
   it('plays when enabled', async () => {
     await loadSounds();
+    mockPlay.mockClear();
     soundWin();
     await new Promise(r => setTimeout(r, 0));
-    expect(mockPlayAsync).toHaveBeenCalled();
+    expect(mockPlay).toHaveBeenCalled();
   });
 
   it('does not play when disabled', async () => {
     await loadSounds();
+    mockPlay.mockClear();
+    mockSeekTo.mockClear();
     useGameStore.getState().setSoundEnabled(false);
     soundWin();
     await new Promise(r => setTimeout(r, 0));
-    expect(mockPlayAsync).not.toHaveBeenCalled();
+    expect(mockPlay).not.toHaveBeenCalled();
   });
 });
 
 describe('play before load', () => {
   it('does nothing if sounds not loaded', () => {
     soundTap();
-    expect(mockPlayAsync).not.toHaveBeenCalled();
-    expect(mockSetPositionAsync).not.toHaveBeenCalled();
+    expect(mockPlay).not.toHaveBeenCalled();
+    expect(mockSeekTo).not.toHaveBeenCalled();
   });
 });
