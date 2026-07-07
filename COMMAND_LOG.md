@@ -42,3 +42,7 @@ All shell commands run during development of this project, in chronological orde
 31. `npm uninstall expo-av` — Remove deprecated expo-av
 32. `npx tsc --noEmit` — Type check persistence + expo-audio migration (zero errors)
 33. `npx jest --coverage --watchman=false` — Run tests with coverage (102 tests, 100% all metrics)
+
+## 2026-07-07 — Product & architecture review
+
+1. `ls && find app/src -type f && cat app/package.json app/app.json` — Inspect project structure and config for PRODUCT_REVIEW.md
